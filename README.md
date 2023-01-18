@@ -92,6 +92,3 @@ For a super quick deployment, use `make deploy` which will deploy to a resource 
 make deploy
 ```
 
-## Running in Azure App Service (Windows)
-
-Just don't, it's awful
