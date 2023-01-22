@@ -1,16 +1,10 @@
 provider "aws" {
   region = "eu-central-1"
 }
-
-variable "VMNAME" {
-  type = string
-  description = "Tag Name for creating VM"
-}
-
 resource "aws_instance" "tfvm" {
   ami = "ami-03e08697c325f02ab"
-  instance_type = "t2.micro"
-  key_name = "ssh_aws"
+  instance_type = var.aws_instance_type
+  key_name = var.aws_ssh_key
   vpc_security_group_ids = [ aws_security_group.demoappsg.id ]
   tags = {
     Name = var.VMNAME
