@@ -1,0 +1,63 @@
+---
+- hosts: "{{ lookup('ansible.builtin.env', 'TF_VAR_VMNAME') }}"
+  become: true
+  vars:
+    container_name: demoapp
+    container_image: "atom363/demoapp:python-web-app-1.0"
+
+  tasks:
+    - name: Install aptitude
+      apt:
+        name: aptitude
+        state: latest
+        update_cache: true
+
+    - name: Install required system packages
+      apt:
+        pkg:
+          - apt-transport-https
+          - ca-certificates
+          - curl
+          - software-properties-common
+          - python3-pip
+          - virtualenv
+          - python3-setuptools
+        state: latest
+        update_cache: true
+
+    - name: Add Docker GPG apt Key
+      apt_key:
+        url: https://download.docker.com/linux/ubuntu/gpg
+        state: present
+
+    - name: Add Docker Repository
+      apt_repository:
+        repo: deb https://download.docker.com/linux/ubuntu jammy stable
+        state: present
+
+    - name: Update apt and install docker-ce
+      apt:
+        name: docker-ce
+        state: latest
+        update_cache: true
+
+    - name: Install Docker Module for Python
+      pip:
+        name: docker
+
+    - name: Login to Dockerhub
+      community.docker.docker_login:
+        username: "{{ lookup('ansible.builtin.env', 'DOCKER_HUB_USER') }}"
+        password: "{{ lookup('ansible.builtin.env', 'DOCKER_HUB_PASS') }}"
+
+    - name: Pull app Docker image
+      community.docker.docker_image:
+        name: "{{ container_image }}"
+        source: pull
+
+    - name:  Create and start app container
+      community.docker.docker_container:
+        name: "{{ container_name }}"
+        image: "{{ container_image }}"
+        published_ports: 5000:5000
+        state: started
