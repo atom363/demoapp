@@ -54,7 +54,8 @@ deploy_application:
   image: ubuntu:22.04
   before_script:
     - apt update
-    - apt install -y ansible py3-boto3
+    - apt install -y ansible python3 python3-pip
+    - pip3 install boto3
     - echo "$SSH_KEY_AWS" > "$(pwd)/aws_ssh.pem"
   script:
     - ansible-playbook ./infrastructure/ansible/app_role/playbook.yml -i ./infrastructure/ansible/app_role/aws_ec2.yml
