@@ -2,8 +2,8 @@
 - hosts: "{{ lookup('ansible.builtin.env', 'TF_VAR_VMNAME') }}"
   become: true
   vars:
-    container_name: demoapp
-    container_image: "atom363/demoapp:python-web-app-1.0"
+    container_name: "{{ lookup('ansible.builtin.env', 'PROD_CONTAINER_NAME') }}"     #demoapp
+    container_image: "{{ lookup('ansible.builtin.env', 'PROD_CONTAINER_IMAGE') }}"   #"atom363/demoapp:python-web-app-1.0"
 
   tasks:
     - name: Install aptitude
