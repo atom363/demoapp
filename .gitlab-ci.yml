@@ -53,8 +53,8 @@ deploy_application:
   stage: deploy_app
   image: ubuntu:22.04
   before_script:
-    - apt update
-    - apt install -y ansible python3 python3-pip
+    - apt-get update
+    - apt-get install -qy ansible python3 python3-pip
     - pip3 install boto3
     - echo "$SSH_KEY_AWS" > "$(pwd)/aws_ssh.pem"
   script:
