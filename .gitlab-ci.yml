@@ -53,7 +53,7 @@ deploy_application:
   stage: deploy_app
   image: alpine:3.17.1
   before_script:
-    - apk add ansible
+    - apk add ansible py3-boto3
     - echo "$SSH_KEY_AWS" > "$(pwd)/aws_ssh.pem"
   script:
     - ansible-playbook ./infrastructure/ansible/app_role/playbook.yml -i ./infrastructure/ansible/app_role/aws_ec2.yml
