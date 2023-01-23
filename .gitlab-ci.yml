@@ -59,7 +59,7 @@ deploy_application:
     - echo "$SSH_KEY_AWS" > "$(pwd)/aws_ssh.pem"
     - export ANSIBLE_HOST_KEY_CHECKING=False
   script:
-    - ansible-playbook ./infrastructure/ansible/app_role/playbook.yml -i ./infrastructure/ansible/app_role/aws_ec2.yml
+    - ansible-playbook ./infrastructure/ansible/app_role/playbook.yml -i ./infrastructure/ansible/app_role/aws_ec2.yml --key-file "$(pwd)/aws_ssh.pem"
   rules:
     - if: $CI_COMMIT_BRANCH == "master"
 
