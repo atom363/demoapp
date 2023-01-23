@@ -3,12 +3,19 @@ variables:
   PROD_CONTAINER_IMAGE: "atom363/demoapp:python-web-app-1.0"
   TF_VAR_VMNAME: diploma
   TF_ADDRESS: ${CI_API_V4_URL}/projects/${CI_PROJECT_ID}/terraform/state/tf_state
+  TF_ROOT: ${CI_PROJECT_DIR}/infrastructure/tf/
+
+cache:
+  key: terraform-plugins-cache
+  paths:
+    - ${TF_ROOT}/.terraform
 
 #Test1
 stages:
   - test
   - build
-  - deploy_infra
+  - deploy_infra_plan
+  - deploy_infra_apply
   - deploy_app
 
 test_app:
@@ -33,20 +40,34 @@ build_image:
     - docker build -t $PROD_CONTAINER_IMAGE ./app/
     - docker push $PROD_CONTAINER_IMAGE
 
-deploy_infrastructure:
-  stage: deploy_infra
-  image: 
-    name: hashicorp/terraform:1.3.7
-    entrypoint:
-      - '/usr/bin/env'
-      - 'PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin'
+deploy_infrastructure_plan:
+  stage: deploy_infra_plan
+  image: registry.gitlab.com/gitlab-org/terraform-images/stable:latest
+    # name: hashicorp/terraform:1.3.7
+    # entrypoint:
+    #   - '/usr/bin/env'
+    #   - 'PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin'
   script:
     - cd ./infrastructure/tf/
-    - terraform init -input=false
-    - terraform plan
-    - terraform apply -auto-approve
+    - gitlab-terraform init 
+    - gitlab-terraform plan
+  artifacts:
+    name: plan
+    paths:
+      - ${TF_ROOT}/plan.cache
   rules:
     - if: $CI_COMMIT_BRANCH == "master"
+
+deploy_infrastructure_apply:
+  stage: deploy_infra_apply
+  image: registry.gitlab.com/gitlab-org/terraform-images/stable:latest
+  script: 
+    - gitlab-terraform apply
+  dependencies:
+    - "deploy_infrastructure_plan"
+  rules:
+    - if: $CI_COMMIT_BRANCH == "master"
+  when: manual
 
 deploy_application:
   stage: deploy_app
