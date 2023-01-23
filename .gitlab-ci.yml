@@ -60,7 +60,7 @@ deploy_application:
     - chown 400 $(pwd)/aws_ssh.pem
     - export ANSIBLE_HOST_KEY_CHECKING=False
   script:
-    - ansible-playbook ./infrastructure/ansible/app_role/playbook.yml -i ./infrastructure/ansible/app_role/aws_ec2.yml --key-file "$(pwd)/aws_ssh.pem"
+    - ansible-playbook ./infrastructure/ansible/app_role/playbook.yml -i ./infrastructure/ansible/app_role/aws_ec2.yml --key-file $SSH_KEY_AWS
   rules:
     - if: $CI_COMMIT_BRANCH == "master"
 
