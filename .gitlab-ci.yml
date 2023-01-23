@@ -65,6 +65,7 @@ deploy_infrastructure_apply:
     - gitlab-terraform apply
   dependencies:
     - "deploy_infrastructure_plan"
+  allow_failure: false
   rules:
     - if: $CI_COMMIT_BRANCH == "master"
   when: manual
@@ -77,8 +78,6 @@ deploy_application:
     - export ANSIBLE_HOST_KEY_CHECKING=False
   script:
     - ansible-playbook ./infrastructure/ansible/app_role/playbook.yml -i ./infrastructure/ansible/app_role/aws_ec2.yml --key-file $SSH_KEY_AWS
-  dependencies:
-    - "deploy_infrastructure_apply"
   rules:
     - if: $CI_COMMIT_BRANCH == "master"
 
