@@ -1,6 +1,6 @@
 variables:
   PROD_CONTAINER_NAME: demoapp
-  PROD_CONTAINER_IMAGE: "atom363/demoapp:python-web-app-1.1"
+  PROD_CONTAINER_IMAGE: "atom363/demoapp:python-web-app-1.2"
   TF_VAR_VMNAME: diploma
   TF_ADDRESS: ${CI_API_V4_URL}/projects/${CI_PROJECT_ID}/terraform/state/tf_state
   TF_ROOT: ${CI_PROJECT_DIR}/infrastructure/tf/
@@ -10,7 +10,6 @@ cache:
   paths:
     - ${TF_ROOT}/.terraform
 
-#Test2
 stages:
   - test
   - build
