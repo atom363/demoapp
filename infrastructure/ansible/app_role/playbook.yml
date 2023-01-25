@@ -2,8 +2,8 @@
 - hosts: "{{ lookup('ansible.builtin.env', 'TF_VAR_VMNAME') }}"
   become: true
   vars:
-    container_name: "{{ lookup('ansible.builtin.env', 'PROD_CONTAINER_NAME') }}"     #demoapp
-    container_image: "{{ lookup('ansible.builtin.env', 'PROD_CONTAINER_IMAGE') }}"   #"atom363/demoapp:python-web-app-1.0"
+    container_name: "{{ lookup('ansible.builtin.env', 'PROD_CONTAINER_NAME') }}"     
+    container_image: "{{ lookup('ansible.builtin.env', 'PROD_CONTAINER_IMAGE') }}"   
 
   tasks:
     - name: Install aptitude
@@ -54,6 +54,11 @@
       community.docker.docker_image:
         name: "{{ container_image }}"
         source: pull
+
+    - name: Delete old app container
+      community.docker.docker_container:
+        name: "{{ container_name }}"
+        state: absent
 
     - name:  Create and start app container
       community.docker.docker_container:
