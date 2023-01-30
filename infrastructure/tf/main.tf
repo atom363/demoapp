@@ -27,6 +27,7 @@ resource "aws_instance" "demoapp-vm" {
 }
 resource "aws_security_group" "demoappsg" {
   name = "demoapp-sg"
+  vpc_id = aws_vpc.demoapp-vpc.id
   ingress {
     protocol = "tcp"
     from_port = 5000
