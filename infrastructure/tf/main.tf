@@ -21,6 +21,7 @@ resource "aws_instance" "demoapp-vm" {
   subnet_id = aws_subnet.demoapp-public-subnet.id
   key_name = var.aws_ssh_key
   vpc_security_group_ids = [ aws_security_group.demoappsg.id ]
+  associate_public_ip_address = true
   tags = {
     Name = var.VMNAME
   }
