@@ -1,9 +1,24 @@
 provider "aws" {
-  region = "eu-central-1"
+  region = var.aws_region
 }
-resource "aws_instance" "tfvm" {
-  ami = "ami-03e08697c325f02ab"
+data "aws_ami" "ubuntu-linux-2204" {
+  most_recent = true
+  owners      = ["099720109477"] # Canonical
+  
+  filter {
+    name   = "name"
+    values = ["ubuntu/images/hvm-ssd/ubuntu-jammy-22.04-amd64-server*"]
+  }
+  
+  filter {
+    name   = "virtualization-type"
+    values = ["hvm"]
+  }
+}
+resource "aws_instance" "demoapp-vm" {
+  ami = data.aws_ami.ubuntu-linux-2204.id
   instance_type = var.aws_instance_type
+  subnet_id = aws_subnet.demoapp-public-subnet.id
   key_name = var.aws_ssh_key
   vpc_security_group_ids = [ aws_security_group.demoappsg.id ]
   tags = {
@@ -39,5 +54,5 @@ resource "aws_security_group" "demoappsg" {
   }
 }
 output "instance_ips" {
-  value = aws_instance.tfvm.public_ip
+  value = aws_instance.demoapp-vm.public_ip
 }
